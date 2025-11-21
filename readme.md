@@ -167,7 +167,7 @@ In addition to the frame-to-frame ICP baseline, this repo also provides a
 **KinectFusion-style RGB-D pipeline** that uses **frame-to-model ICP** and a live
 visualization:
 
-- Script: `kinfu_icp_f2m.py`
+- Script: `reconstruct_with_f2f.py`
 - Input: TUM RGB-D sequence `rgbd_dataset_freiburg1_xyz`
 - Pose representation: `curr_pose` (cam → world), updated per frame
 
