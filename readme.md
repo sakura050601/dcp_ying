@@ -157,6 +157,7 @@ Install (example):
 
 ```bash
 pip install numpy scipy open3d
+```
 
 ---
 
@@ -215,3 +216,4 @@ From the project root:
 
 ```bash
 python reconstruct_with_f2f.py
+```
