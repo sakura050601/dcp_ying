@@ -117,10 +117,12 @@ class TSDFVolumeNumpy:
         self.tsdf.flat[flat] = (w_old * ts_old + tsdf_new) / w_new
 
         # ===== 7. Debug 统计（可选）=====
+        tsdf_vals = self.tsdf.flat[flat]
         log.debug(
             f"[TSDF] updated_voxels={flat.size}, "
             f"z_range=({z.min():.3f},{z.max():.3f}), "
-            f"sdf_range=({sdf.min():.3f},{sdf.max():.3f})"
+            f"sdf_range=({sdf.min():.3f},{sdf.max():.3f}), "
+            f"tsdf_range=({tsdf_vals.min():.3f},{tsdf_vals.max():.3f})"
         )
 
     def extract_mesh(self):

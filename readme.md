@@ -157,3 +157,61 @@ Install (example):
 
 ```bash
 pip install numpy scipy open3d
+
+---
+
+## 4. KinectFusion-style frame-to-model ICP (new pipeline)
+
+In addition to the frame-to-frame ICP baseline, this repo also provides a
+**KinectFusion-style RGB-D pipeline** that uses **frame-to-model ICP** and a live
+visualization:
+
+- Script: `kinfu_icp_f2m.py`
+- Input: TUM RGB-D sequence `rgbd_dataset_freiburg1_xyz`
+- Pose representation: `curr_pose` (cam → world), updated per frame
+
+### 4.1. Core idea
+
+Instead of chaining relative poses between consecutive frames, the KinectFusion-style
+pipeline always aligns the current depth frame against the **accumulated TSDF
+model**:
+
+1. Maintain a global camera pose `curr_pose` (cam → world).
+2. For each incoming depth frame:
+   - Use `curr_pose` to transform the depth point cloud into world space.
+   - Run multi-scale **point-to-plane ICP** against the TSDF mesh vertices
+     (treated as the current model surface).
+   - Obtain an incremental transform `Delta` and update:
+
+     ```text
+     curr_pose_new = Delta @ curr_pose
+     ```
+
+   - Integrate the depth into the TSDF volume using `curr_pose_new`.
+
+This is conceptually close to the original KinFu / Unity-style pipeline:
+
+> RenderSurfacePrediction + ICPTracker.Track → update camera pose → TSDF fusion
+
+### 4.2. Live visualization
+
+`reconstruct_with_f2f.py` opens an **Open3D visualizer** and shows:
+
+- TSDF model as a **black point cloud** (white background, light turned off).
+- A **blue box** representing the current camera pose (rigid body).
+- A **green line** (LineSet) for the camera trajectory in world coordinates.
+- The Open3D camera view is driven by the current `curr_pose` to mimic a
+  first-person / follow-camera view.
+
+This makes it easy to visually inspect:
+
+- How the camera moves through the scene,
+- Where ICP alignment might fail,
+- How the reconstructed geometry gradually converges.
+
+### 4.3. How to run
+
+From the project root:
+
+```bash
+python reconstruct_with_f2f.py
